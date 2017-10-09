@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script src="http://colorbrewer2.org/export/colorbrewer.js"></script>
+    <style>
+      #main {
+        width: 1100px
+      }          
+      #title {
+        text-align: center;
+      }
+      #subtitle {
+        text-align: center;
+      }
+      #tooltip {   
+        position: absolute;           
+        text-align: left;            
+        margin: 10px;
+        font: 12px sans-serif;         
+        pointer-events: none;
+        background:rgba(0,0,0,0.9);
+        border:1px solid grey;
+        border-radius:5px;
+        font-size:12px;
+        width:auto;
+        padding:4px;
+        color:white;
+        opacity:0;         
+      }
+      #tooltip h4{
+        margin:0;
+        margin-bottom: 0px;
+        font-size:14px;
+        font-weight: bold;
+        text-align: center;
+      }
+      #tooltip h5{
+        margin:0;
+        margin-bottom: 3px;
+        font-size:12px;
+        text-align: center;
+        font-style: italic;
+      }
+
+      #tooltip table{
+        table-layout:fixed;
+      }
+      #tooltip tr td{
+        padding:0;
+        margin:0;
+      }
+      #tooltip tr td:nth-child(1){
+        width:150px;
+      }
+      #tooltip tr td:nth-child(2){
+        text-align:center;
+      }
+    </style>
+    <script type="text/javascript">            
+      function draw(geo_data) {
+        "use strict";
+
+      //Filter variables
+
+      var mode = 'origin';
+      var weekday = 'all';
+      var time_of_day = 'all';
+      var logScale = 'true';
+      var lockScale = 'false';
+
+      //Filter functions
+      
+      function redraw(geo_data, mode, weekday, time_of_day, logScale) {
+        if (lockScale == 'false'){
+          colorScale = colorScaleFunction(geo_data, mode, weekday, time_of_day, logScale);
+        };
+        map.transition()
+            .duration(500)
+            .style('fill', function(d) {
+                            if (logScale == 'true') {
+                              var c = Math.log(d.data[weekday][time_of_day][mode].count);
+                            }
+                            if (logScale == 'false') {
+                              var c = d.data[weekday][time_of_day][mode].count;
+                            }
+                            return colorScale(c);
+                          });
+        d3.select('#tooltip')
+          .html("<h4>"+function(d) {return d.properties.zone;}+"</h4><table>"+
+                "<tr><h5>"+function(d) {return d.properties.borough;}+"</h5></tr>"+
+                "<tr><td>Origin Count: </td><td>"+numberWithCommas(function(d) {
+                  return d.data[weekday][time_of_day][mode].count;})+"</td></tr>"+
+                "<tr><td>Average Trip Price:</td><td>"+function(d) {
+                  return d.data[weekday][time_of_day][mode].price;}+"</td></tr>"+
+                "</table>");
+      }
+
+      //ColorScaleFunction
+      
+      function colorScaleFunction(geo_data, mode, weekday, time_of_day, logScale) {
+        var reds = colorbrewer.Reds[9];
+        if(mode == 'origin') {
+          var scale = d3.scale.quantize()
+                          .range(reds);
+        }
+        if(mode == 'destination') {
+          var scale = d3.scale.quantize()
+                          .range(reds);
+        }
+        var maxcount = 
+        scale.domain([0, d3.max(geo_data.features, function(d) {
+                              var c;
+                              if (logScale == 'true') {
+                                c = Math.log(d.data[weekday][time_of_day][mode].count);
+                              }
+                              if (logScale == 'false') {
+                                c = d.data[weekday][time_of_day][mode].count;
+                              }
+                              return c; 
+                            })]);
+        var legend = scale.range().map(scale.invertExtent)
+                                  .map(function(d){
+                                    return d[1];
+                                  })
+                                  .map(function(d) {
+                                    if (logScale == 'true') {
+                                      return Math.exp(d);
+                                    }
+                                    else {return +d;}
+                                  })
+                                  .map(function(d,i) {
+                                    return [Math.round(d), reds[i]];
+                                  });
+        d3.selectAll('.legend-text').remove()
+        legend.unshift([0, '#ffffff'])                  
+        var selection = d3.select('svg')
+          .selectAll('#legend') 
+          .data(legend)
+          .enter()
+          .append('g')
+          .attr('id', 'legend')
+        selection.append('rect')
+          .attr('width', 122.2)
+          .attr('height', 5)
+          .attr('transform', function(d, i) {
+            return 'translate(' + ((i-1)*122.2) + ',0)';})
+          .style('fill', function(d){
+            return d[1];
+          });
+          d3.selectAll('#legend')
+          .append('text')
+          .attr('class', 'legend-text')
+          .attr('x', function(d,i){
+            return 122.2*(i);
+          })              
+          .attr('y', 17)
+          .style('text-anchor', 'end')
+          .style('fill', 'black')       
+          .text(function(d){
+            return d[0].toString();
+            }); 
+        d3.select('svg').append('text').attr('x', 10).attr('y', 17)
+          .attr('class', 'legend-text').style('text-anchor', 'end').text('0');
+        return scale;
+      }
+
+      
+      // Number parsing function
+      function numberWithCommas(x) {
+          return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      }
+
+      //Find the center of the geojson
+      var center = d3.geo.centroid(geo_data);
+
+      //Map Size
+      var width = 1100,
+          height = 1000;
+
+      //Base svg
+      var svg = d3.select("#main")
+          .append("svg")
+          .attr("width", width)
+          .attr("height", height)
+          .append('g')
+          .attr('class', 'map');
+
+      //Background
+      svg.append('rect')
+        .attr('width', width)
+        .attr('height', height)
+        .style("fill", "gainsboro");
+
+      var colorScale = colorScaleFunction(geo_data, mode, weekday, time_of_day, logScale);
+
+      //Tooltip
+      var div = d3.select("body").append("div")   
+        .attr("class", "tooltip")               
+        .style("opacity", 0);
+
+      //Animation
+
+      function animate() {
+        console.log('what?')
+        var group = svg.append("g")
+                       .attr('class', 'animation')
+                       .attr("transform", function(d, i) { return "translate(50,50)"; });
+        
+        var rectangle = group.append("rect")
+                      .attr("width", 450)
+                      .attr("height", 450)
+                      .attr('rx', 5)
+                      .attr('ry', 5)
+                      .style('opacity', .8);
+        var textBox = group.append("g").attr("transform", function(d, i) { return "translate(30,30)"; });
+        var fo = textBox.append("foreignObject")
+               .attr('class', 'text-box')
+               .attr("width", 390)
+               .attr("height", 390)               
+               .append("xhtml:body")
+               .style('background', 'none')
+               .style('color', 'white')
+               .append('table')
+               .style('width', '390px')
+               .style('height', '390px');
+
+        var htmlText = fo.append('tbody').append('tr')  
+               .html("<h3>Introduction</h3><p>This choropleth, a map the uses color to show proportions, was created using the\
+               NYC Taxi & Limousine Commission (TLC) trip data, more precisely, the June/2017 dataset.</p>\
+               <p>This is an interactive visualization, you can use the buttons at the top to alternate\
+                between using the count of the trips that started or ended\
+               in each zone, and to further filter the trips regarding the time of day and day of the week. The left\
+                mouse button and mouse wheel pan and zooms the map.</p>");
+        var btns = fo.append('tfoot').append('table').style('width', '390px');
+        btns.append('td').append('button').attr('type', 'button')
+            .attr('class', 'btn btn-block btn-sm btn-outline-danger')
+            .attr('id', 'next-btn').html('Quit')
+            .on('click', endAnimation)
+        var i = 0;
+        btns.append('td').append('button').attr('type', 'button')
+            .attr('class', 'btn btn-block btn-sm btn-outline-primary')
+            .attr('id', 'next-btn').html('Next')
+            .on('click', function() {
+              animateNext(htmlText, i);
+              i = i+1;
+            })
+      };
+
+      function animateNext(htmlText, i) {
+        if (i==0) {
+          htmlText.html('<h3>')
+          document.getElementById('lock-btn').click()
+        }
+        if (i==1) {
+          htmlText.html('Good')
+        }
+        if (i==2) {
+          htmlText.html('Morning')
+        }
+        if (i==3) {
+          htmlText.html('N')
+        }
+        if (i==4) {
+          htmlText.html('Y')
+        }
+        if (i==5) {
+          htmlText.html('C')
+        }
+        console.log(i);
+      };
+      
+
+      function endAnimation() {
+        d3.select('.animation').remove()
+      }
+
+      //Projection
+      //For some reason, firefox and chrome need different translate values for the projection
+      var tx = 1125;
+      var ty = -35;
+      if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1){
+        tx = 450;
+        ty = -350;
+      };
+      
+      var projection = d3.geo.mercator()
+                              .scale(100000)
+                              .center(center)
+                              .translate([tx, ty]);
+      
+      var path = d3.geo.path().projection(projection);
+
+      //Base 'g' for zoom and pan
+      var g = svg.append("g");
+
+      //Map creation
+      var map = g.selectAll('path')
+                 .data(geo_data.features)
+                 .enter()
+                 .append('path')
+                 .attr('d', path)
+                 .attr('class', function(d){return d.properties.borough})
+                 .attr('id', function(d){return d.properties.zone})
+                 .style('fill', function(d) {
+                                  return colorScale(Math.log(d.data[weekday][time_of_day][mode].count));
+                                  })
+                 .style('stroke', 'black')
+                 .style('stroke-width', 0.5)
+                 .on("mouseenter", function(d) {
+                    d3.select(this)
+                      .transition()
+                      .duration(200)
+                      .style("stroke-width", "3")
+                      .style('stroke', 'blue');
+                    d3.select('#tooltip')
+                      .transition()        
+                      .duration(200)      
+                      .style("opacity", .8);
+                    d3.select('#tooltip')
+                      .html("<h4>"+d.properties.zone+"</h4><table>"+
+                            "<tr><h5>"+d.properties.borough+"</h5></tr>"+
+                            "<tr><td>Origin Count: </td><td>"+numberWithCommas(d.data[weekday][time_of_day][mode].count)+"</td></tr>"+
+                            "<tr><td>Average Trip Price:</td><td>"+d.data[weekday][time_of_day][mode].price+"</td></tr>"+
+                            "</table>")  
+                      .style("left", (d3.event.pageX) + "px")     
+                      .style("top", (d3.event.pageY - 28) + "px");
+                  })
+                  .on("mouseleave", function(d) {
+                    d3.select(this)
+                      .transition()
+                      .duration(50)
+                      .style("stroke-width", "0.5")
+                      .style('stroke', 'black');
+                    d3.select("#tooltip").transition()
+                      .duration(500).style("opacity", 0);
+                  })
+
+      
+      //Button bindings
+      
+      d3.select('#reset-btn')
+        .on("click", function(d) {
+        reset();
+      })
+
+      //Mode selection
+      d3.select('#origins-btn')
+        .on("click", function(d) {
+        mode = 'origin';
+        redraw(geo_data, mode, weekday, time_of_day, logScale);
+      })
+
+      d3.select('#destinations-btn')
+        .on("click", function(d) {
+        mode = 'destination';
+        redraw(geo_data, mode, weekday, time_of_day, logScale);
+      })
+
+      //Time of day selection
+      d3.select('#all-day-btn')
+        .on("click", function(d) {
+        time_of_day = 'all';
+        redraw(geo_data, mode, weekday, time_of_day, logScale);
+      })
+
+      d3.select('#morning-btn')
+        .on("click", function(d) {
+        time_of_day = 'morning';
+        redraw(geo_data, mode, weekday, time_of_day, logScale);
+      })
+
+      d3.select('#afternoon-btn')
+        .on("click", function(d) {
+        time_of_day = 'afternoon';
+        redraw(geo_data, mode, weekday, time_of_day, logScale);
+      })
+
+      d3.select('#evening-btn')
+        .on("click", function(d) {
+        time_of_day = 'evening';
+        redraw(geo_data, mode, weekday, time_of_day, logScale);
+      })
+
+      d3.select('#night-btn')
+        .on("click", function(d) {
+        time_of_day = 'night';
+        redraw(geo_data, mode, weekday, time_of_day, logScale);
+      })
+
+      //Weekday selection
+      d3.select('#all-week-btn')
+        .on("click", function(d) {
+          weekday = 'all';
+          redraw(geo_data, mode, weekday, time_of_day, logScale);
+      })
+
+      d3.select('#weekdays-btn')
+        .on("click", function(d) {
+          weekday = 'weekday';
+          redraw(geo_data, mode, weekday, time_of_day, logScale);
+      })
+
+      d3.select('#weekends-btn')
+        .on("click", function(d) {
+          weekday = 'weekend';
+          redraw(geo_data, mode, weekday, time_of_day, logScale);
+      })
+
+      //Scale selection
+      d3.select('#log-btn')
+        .on("click", function(d) {
+            logScale = 'true';
+            redraw(geo_data, mode, weekday, time_of_day, logScale);
+      })
+
+      d3.select('#linear-btn')
+        .on("click", function(d) {
+            logScale = 'false';
+            redraw(geo_data, mode, weekday, time_of_day, logScale);
+      })
+      d3.select('#lock-btn')
+        .on("click", function(d) {
+            if (lockScale == 'false') {
+              lockScale = 'true';
+              d3.select('#lock-btn').text('Unlock Scale')
+              }
+            else {
+              lockScale = 'false';
+              d3.select('#lock-btn').text('Lock Scale')
+              };
+            redraw(geo_data, mode, weekday, time_of_day, logScale);
+      })
+      //Animation
+      d3.select('#animation-btn')
+        .on("click", function(d) {
+            animate();
+      })
+
+      // zoom and pan
+      var zoom = d3.behavior.zoom()
+          .on("zoom",function() {
+              g.attr("transform","translate("+ 
+                  d3.event.translate.join(",")+")scale("+d3.event.scale+")");
+      });
+
+      svg.call(zoom)
+
+      };
+
+      </script>
+  </head>
+<body>
+  
+  <div id='main'>
+    <h1 id='title'>NYC Map</h1>
+    <h2 id='subtitle'>Origins</h2>
+    <table width='1107px'>
+      <td>
+        <div class="btn-group" data-toggle="buttons">
+          <label class="btn btn-primary active btn-sm"  id="origins-btn">
+            <input type="radio" name="options"> Origins
+          </label>
+          <label class="btn btn-primary btn-sm" id="destinations-btn">
+            <input type="radio" name="options"> Destinations
+          </label>
+        </div>
+      </td>
+      <td>
+            <div class="btn-group" data-toggle="buttons">
+              <label class="btn btn-secondary active btn-sm" id="all-day-btn">
+                <input type="radio" name="options" class='all-btn'> All
+              </label>
+              <label class="btn btn-secondary btn-sm" id="morning-btn">
+                <input type="radio" name="options"> Morning
+              </label>
+              <label class="btn btn-secondary btn-sm" id="afternoon-btn">
+                  <input type="radio" name="options"> Afternoon
+              </label>
+              <label class="btn btn-secondary btn-sm" id="evening-btn">
+                  <input type="radio" name="options"> Evening
+              </label>
+              <label class="btn btn-secondary btn-sm" id="night-btn">
+                  <input type="radio" name="options"> Night
+              </label>
+            </div>
+          </td>
+          <td>
+            <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-secondary active btn-sm" id="all-week-btn">
+                  <input type="radio" name="options"> All
+                </label>
+                <label class="btn btn-secondary btn-sm" id="weekdays-btn">
+                  <input type="radio" name="options"> Weekdays
+                </label>
+                <label class="btn btn-secondary btn-sm" id="weekends-btn">
+                    <input type="radio" name="options"> Weekends
+                </label>
+            </div>
+          </td>
+          <td>
+            <div class="btn-group" data-toggle="buttons">
+              <label class="btn btn-primary active btn-sm"  id="log-btn">
+                <input type="radio" name="options"> Log Scale
+              </label>
+              <label class="btn btn-primary btn-sm" id="linear-btn">
+                <input type="radio" name="options"> Linear Scale
+              </label>
+              <button type="button" class="btn btn-danger btn-sm" id='lock-btn'>
+                Lock Scale
+            </button>            
+          </td>
+          <td>
+            <button type="button" class="btn btn-success btn-sm" id='animation-btn'>
+              Start Animation
+            </button> 
+          </td>
+    </table>
+  </div>
+  <div id="tooltip"></div><!-- div to hold tooltip. -->
+  <script type="text/javascript">
+ 
+     d3.json("dataSimple2.geojson", draw);
+  </script> 
+</body>
+</html>
