@@ -258,7 +258,10 @@
                <p>This is an interactive visualization, you can use the buttons at the top to alternate\
                 between using the number of trips that started or ended\
                in each zone, and to further filter the trips regarding the time of day and day of the week. The left\
-                mouse button and mouse wheel pan and zooms the map.</p>");
+                mouse button and mouse wheel pan and zooms the map.</p>\
+                <p>By default, this visualization uses a dynamic logarithmic scales, in other words, \
+                it recalculate itself everytime a different filter is used. You can change the scale to linear and lock it using the buttons above.</p>\
+                <p>You can quit this animation and close this textbox anytime. To reopen it, click on 'Start Animation'</p>");
                 var btns = fo.append('tfoot').append('table').style('width', '390px');
                 btns.append('td').append('button').attr('type', 'button')
                     .attr('class', 'btn btn-block btn-sm btn-outline-danger')
@@ -269,59 +272,97 @@
                     .attr('class', 'btn btn-block btn-sm btn-outline-primary')
                     .attr('id', 'next-btn').html('Next')
                     .on('click', function() {
+                        clearInterval(interval)
                         animateNext(htmlText, i);
                         i = i + 1;
                     })
             };
-
-            function animateNext(htmlText, i) {
-                d3.selectAll('.Manhattan').style({
-                    'stroke': 'cyan',
-                    'stroke-width': '1'
-                });
-                d3.selectAll('#z112, #z255, #z256, #z80').style({
-                    'stroke': 'yellow',
-                    'stroke-width': '1'
-                });
-                d3.selectAll('#z66, #z97, #z181, #z106, #z25, #z40, #z54, #z33, #z65, #z52')
-                    .style({
-                        'stroke': 'orange',
-                        'stroke-width': '1'
-                    });
-                d3.selectAll('#z193, #z145, #z226, #z146, #z260').style({
-                    'stroke': 'green',
-                    'stroke-width': '1'
-                });
-                d3.selectAll('#z137, #z179, #z8, #z223, #z207, #z129').style({
-                    'stroke': 'violet',
-                    'stroke-width': '1'
-                });
+            var interval;
+            function animateNext(htmlText, i) {     
                 if (i == 0) {
+                    d3.selectAll('.Manhattan').style({
+                    'stroke': 'cyan'
+                    });
+                    d3.selectAll('#z112, #z255, #z256, #z80').style({
+                        'stroke': 'yellow'
+                    });
+                    d3.selectAll('#z66, #z97, #z181, #z106, #z25, #z40, #z54, #z33, #z65, #z52')
+                        .style({
+                            'stroke': 'orange'
+                        });
+                    d3.selectAll('#z193, #z145, #z226, #z146, #z260').style({
+                        'stroke': 'green'
+                    });
+                    d3.selectAll('#z179, #z8, #z223, #z207, #z129').style({
+                        'stroke': 'violet'
+                    });
                     htmlText.html("<h3>Trip Origin analysis</h3>\
           <p>It's no surprise that the most common trip origins are in <font color='cyan'>\
           Manhattan</font>\
            it's the busiest part of New York City. But there's a few locations in Brooklyn\
-           and Queens that follow a bit behind:</p>\
+           and Queens that follow a bit behind.</p>\
            <p>In Brooklyn, The <font color='yellow'>Williamsburg/Greenpoint</font> and <font color='orange'>\
            DUMBO/Park Slope</font> regions are pretty busy, and in Queens the\
            <font color='green'>Long Island City/Sunnyside</font> and <font color='violet'>Astoria/Jackson Heights</font> \
-           regions are also almost as busy as uptown Manhattan. </p>");
+           regions are also almost as busy as uptown Manhattan.</p>\
+           <p>The airports, LaGuardia and JFK, always have a lot of trips originating and destinating there, no matter the filters used,\
+           so we'll focus on the other regions throughout this animation.");
                     //document.getElementById('lock-btn').click()
                 }
                 if (i == 1) {
-                    htmlText.html("<h3>Trip Origin analysis</h3>\
-          <p>Subsetting the data for time of day:<br>\
-          - Morning: 5am - 12pm | - Afternoon: 12pm - 18pm<br>\
-          - Evening: 18pm - 22pm| - Night: 22pm - 5am<br>\
-          </p>\
-          <p>We can see that during mornings and afternoons, the movement on Wlliamsburg drops,\
+                    function filterToD(tod) {
+                        if(tod%4==0) {
+                            string2 = "<b>- Morning: 5am - 12pm</b> <br> - Afternoon: 12pm - 18pm<br>\
+                                      - Evening: 18pm - 22pm<br> - Night: 22pm - 5am<br>";
+                            htmlText.html(string1+string2+string3);
+                            document.getElementById('morning-btn').click();
+                            //tod = 1;
+                        };
+                        if(tod%4==1) {
+                            string2 = "- Morning: 5am - 12pm <br> <b>- Afternoon: 12pm - 18pm</b><br>\
+                                      - Evening: 18pm - 22pm<br> - Night: 22pm - 5am<br>";
+                            htmlText.html(string1+string2+string3);
+                            document.getElementById('afternoon-btn').click();
+                            //tod = 2;
+                        };
+                        if(tod%4==2) {
+                            string2 = "- Morning: 5am - 12pm <br> - Afternoon: 12pm - 18pm<br>\
+                                   <b>- Evening: 18pm - 22pm</b><br> - Night: 22pm - 5am<br>";
+                            htmlText.html(string1+string2+string3);
+                            document.getElementById('evening-btn').click();
+                            //tod = 3;
+                        };
+                        if(tod%4==3) {
+                            string2 = "- Morning: 5am - 12pm <br> - Afternoon: 12pm - 18pm<br>\
+                                      - Evening: 18pm - 22pm<br> <b>- Night: 22pm - 5am</b><br>";
+                            htmlText.html(string1+string2+string3);
+                            document.getElementById('night-btn').click();
+                            //tod = 0;
+                        };
+                    };
+                    var string1 = "<h3>Trip Origin analysis</h3>\
+          <p>Subsetting the data for time of day:<br>";
+                    var string2 = "- Morning: 5am - 12pm<br> - Afternoon: 12pm - 18pm<br>\
+                                      - Evening: 18pm - 22pm<br> - Night: 22pm - 5am<br>";;
+                    var string3 = "<p>We can see that during mornings and afternoons, the movement on Wlliamsburg drops,\
           but it regains strengh during evenings and nights, while Queens and DUMBO remains\
           busy throughout the day, dropping slightly during evenings in the Queens case.</p>\
           <p>This sugests that people in Manhattan, DUMBO and Queens use taxis to commute, while in \
           Williamsburg it's more common to take a cab when going out, during evenings.</p> <p>In all these\
-          regions, using taxis to come back home during the night is a very popular choice!</p>")
+          regions, using taxis to come back home during the night is a very popular choice.</p>";
+                    htmlText.html(string1+string2+string3);                     
+                    var tod = 0;               
+                    interval = setInterval(function () {
+                        //if (stop == 1) {
+                        //    clearInterval(interval)
+                        //};
+                        filterToD(tod);
+                        tod++;
+                    }, 2000);                    
                 }
+
                 if (i == 2) {
+                    clearInterval(interval)
                     htmlText.html('Morning')
                 }
                 if (i == 3) {
@@ -337,6 +378,8 @@
             };
 
             function endAnimation() {
+                clearInterval(interval)
+                d3.selectAll('.path').style('stroke', 'black')
                 d3.select('.animation').remove()
             }
 
@@ -387,6 +430,7 @@
             var g = svg.append("g");
 
             //Map creation
+            var prevColor;
             var map = g.selectAll('path')
                 .data(geo_data.features)
                 .enter()
@@ -402,13 +446,19 @@
                     return colorScale(Math.log(d.data[weekday][time_of_day][mode].count));
                 })
                 .style('stroke', 'black')
-                .style('stroke-width', 0.5)
+                .style('stroke-width', 1)
                 .on("mouseenter", function(d) {
+                    var testStyle = d3.select(this).style('stroke')
+                    if(testStyle != 'black') {
+                        prevColor = testStyle;
+                    }
+                    else {
+                        prevColor = 'black';
+                    };
                     d3.select(this)
                         .transition()
                         .duration(200)
-                        .style("stroke-width", "3")
-                        .style('stroke', 'blue');
+                        .style("stroke-width", "5")
                     d3.select('#tooltip')
                         .transition()
                         .duration(200)
@@ -425,9 +475,9 @@
                 .on("mouseleave", function(d) {
                     d3.select(this)
                         .transition()
-                        .duration(50)
-                        .style("stroke-width", "0.5")
-                        .style('stroke', 'black');
+                        .duration(200)
+                        .style("stroke-width", "1")
+                        .style('stroke', prevColor);
                     d3.select("#tooltip").transition()
                         .duration(500).style("opacity", 0);
                 })
