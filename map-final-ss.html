@@ -181,7 +181,7 @@
                     .style('text-anchor', 'end')
                     .style('fill', 'black')
                     .text(function(d) {
-                        return d[0].toString();
+                        return numberWithCommas(d[0]).toString();
                     });
                 d3.select('svg').append('text').attr('x', 10).attr('y', 17)
                     .attr('class', 'legend-text').style('text-anchor', 'end').text('0');
