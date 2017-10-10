@@ -558,7 +558,7 @@
                         .html("<h4>" + d.properties.zone + "</h4><table>" +
                             "<tr><h5>" + d.properties.borough + "</h5></tr>" +
                             "<tr><td>Origin Count: </td><td>" + numberWithCommas(d.data[weekday][time_of_day][mode].count) + "</td></tr>" +
-                            "<tr><td>Average Trip Price:</td><td>" + d.properties.LocationID + "</td></tr>" +
+                            "<tr><td>Average Trip Price:</td><td>" + d.data[weekday][time_of_day][mode].price + "</td></tr>" +
                             "</table>")
                         .style("left", (d3.event.pageX) + "px")
                         .style("top", (d3.event.pageY - 28) + "px");
