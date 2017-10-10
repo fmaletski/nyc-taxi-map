@@ -224,8 +224,16 @@
                 .style("opacity", 0);
 
             //Animation
-
+            function resetMap(mode) {
+                if (mode=='origin') document.getElementById('origins-btn').click();
+                if (mode=='destination') document.getElementById('destinations-btn').click();
+                document.getElementById('all-day-btn').click();
+                document.getElementById('all-week-btn').click();                
+                document.getElementById('log-btn').click();
+                if (lockScale == 'true') document.getElementById('lock-btn').click();
+            }
             function animate() {
+                resetMap('origin');
                 var group = svg.append("g")
                     .attr('class', 'animation')
                     .attr("transform", function(d, i) {
@@ -250,9 +258,9 @@
                     .style('color', 'white')
                     .append('table')
                     .style('width', '390px')
-                    .style('height', '390px');
+                    .style('height', '500px');
 
-                var htmlText = fo.append('tbody').append('tr')
+                var htmlText = fo.append('tbody').style('height', '100%').append('tr')
                     .html("<h3>Introduction</h3><p>This choropleth, a map the uses color to show proportions, was created using the\
                NYC Taxi & Limousine Commission (TLC) trip data, more precisely, the June/2017 dataset.</p>\
                <p>This is an interactive visualization, you can use the buttons at the top to alternate\
@@ -260,7 +268,8 @@
                in each zone, and to further filter the trips regarding the time of day and day of the week. The left\
                 mouse button and mouse wheel pan and zooms the map.</p>\
                 <p>By default, this visualization uses a dynamic logarithmic scale, in other words, \
-                it recalculate itself everytime a different filter is used. You can change the scale to linear and lock it using the buttons above.</p>\
+                it recalculate itself everytime a different filter is used. You can change the scale to \
+                linear and lock it using the buttons above.</p>\
                 <p>You can quit this animation and close this textbox anytime. To reopen it, click on 'Start Animation'.</p>");
                 var btns = fo.append('tfoot').append('table').style('width', '390px');
                 btns.append('td').append('button').attr('type', 'button')
@@ -278,8 +287,9 @@
                     })
             };
             var interval;
-            function animateNext(htmlText, i) {     
+            function animateNext(htmlText, i) {  
                 if (i == 0) {
+                    resetMap('origin');
                     d3.selectAll('.Manhattan').style({
                     'stroke': 'cyan'
                     });
@@ -307,37 +317,33 @@
            regions are also almost as busy as uptown Manhattan.</p>\
            <p>The airports, LaGuardia and JFK, always have a lot of trips originating and destinating there, no matter the filters used,\
            so we'll focus on the other regions throughout this animation.");
-                    //document.getElementById('lock-btn').click()
                 }
                 if (i == 1) {
+                    resetMap('origin');
                     function filterToD(tod) {
                         if(tod%4==0) {
-                            string2 = "<b>- Morning: 5am - 12pm</b> <br> - Afternoon: 12pm - 18pm<br>\
+                            string2 = "<b><font color='Lime'>- Morning: 5am - 12pm</font></b> <br> - Afternoon: 12pm - 18pm<br>\
                                       - Evening: 18pm - 22pm<br> - Night: 22pm - 5am<br>";
                             htmlText.html(string1+string2+string3);
                             document.getElementById('morning-btn').click();
-                            //tod = 1;
                         };
                         if(tod%4==1) {
-                            string2 = "- Morning: 5am - 12pm <br> <b>- Afternoon: 12pm - 18pm</b><br>\
+                            string2 = "- Morning: 5am - 12pm <br> <b><font color='Lime'>- Afternoon: 12pm - 18pm</font></b><br>\
                                       - Evening: 18pm - 22pm<br> - Night: 22pm - 5am<br>";
                             htmlText.html(string1+string2+string3);
                             document.getElementById('afternoon-btn').click();
-                            //tod = 2;
                         };
                         if(tod%4==2) {
                             string2 = "- Morning: 5am - 12pm <br> - Afternoon: 12pm - 18pm<br>\
-                                   <b>- Evening: 18pm - 22pm</b><br> - Night: 22pm - 5am<br>";
+                                   <b><font color='Lime'>- Evening: 18pm - 22pm</font></b><br> - Night: 22pm - 5am<br>";
                             htmlText.html(string1+string2+string3);
                             document.getElementById('evening-btn').click();
-                            //tod = 3;
                         };
                         if(tod%4==3) {
                             string2 = "- Morning: 5am - 12pm <br> - Afternoon: 12pm - 18pm<br>\
-                                      - Evening: 18pm - 22pm<br> <b>- Night: 22pm - 5am</b><br>";
+                                      - Evening: 18pm - 22pm<br> <b><font color='Lime'>- Night: 22pm - 5am</font></b><br>";
                             htmlText.html(string1+string2+string3);
                             document.getElementById('night-btn').click();
-                            //tod = 0;
                         };
                     };
                     var string1 = "<h3>Trip Origin analysis</h3>\
@@ -353,22 +359,92 @@
                     htmlText.html(string1+string2+string3);                     
                     var tod = 0;               
                     interval = setInterval(function () {
-                        //if (stop == 1) {
-                        //    clearInterval(interval)
-                        //};
                         filterToD(tod);
                         tod++;
                     }, 2000);                    
                 }
 
                 if (i == 2) {
+                    resetMap('origin');
+                    d3.selectAll('path').style('stroke', 'black')
                     clearInterval(interval)
-                    htmlText.html('Morning')
+                    var title = '<h3>Trip Destination analysis</h3>';
+                    var ori = 'origins';
+                    var dest = 'destination';
+                    var body1 = '<p>Changing the map to ';
+                    var body2 = " count, it becomes immeditelly noticible that the concentration of trips in Manhattan and its\
+                    surrounding areas, on Queens and Brooklyn, is less evident than when looking into "
+                    var body3 = ".</p><p>They are the most popular destinations, but the distribution is more even and goes \
+                    further into the outer boroughs.</p>";
+                    htmlText.html(title+body1+dest+body2+ori+body3);
+                    function changeMode(md) {
+                        if(md%2==0) {                            
+                            var ori = 'origins';
+                            var dest = "<b><font color='Lime'>destination</font></b>";
+                            htmlText.html(title+body1+dest+body2+ori+body3);
+                            document.getElementById('destinations-btn').click();
+                        };
+                        if(md%2==1) {
+                            var ori = "<b><font color='Lime'>origins</font></b>";
+                            var dest = 'destination';
+                            htmlText.html(title+body1+dest+body2+ori+body3);
+                            document.getElementById('origins-btn').click();
+                        }
+                    };
+                    var md = 0;
+                    interval = setInterval(function () {
+                        changeMode(md);
+                        md++;
+                    }, 2000);
                 }
                 if (i == 3) {
-                    htmlText.html('N')
+                    resetMap('destination');
+                    clearInterval(interval);
+                    var title = '<h3>Trip Destination analysis</h3>';
+                    var body1 = "<p>Changing the map to <b><font color='Lime'>destination</font></b> count, it becomes immeditelly \
+                    noticible that the concentration of trips in Manhattan and its\
+                    surrounding areas, on Queens and Brooklyn, is less evident than when looking into origins.</p><p>They are the most \
+                    popular destinations, but the distribution is more even and goes \
+                    further into the outer boroughs.</p>\
+                    <p>Filtering it for the time of day (";
+                    var tod = "morning, afternoon, evening and night";
+                    body2 = ") show us that this behaviour, while present even early in the mornings, is increasely strong as the day\
+                    goes by.</p><p>Further confirming the hypothesis that newyorkers like to use taxis to come home after going out \
+                    in the evening.";
+                    htmlText.html(title+body1+tod+body2);
+                    document.getElementById('destinations-btn').click();
+                    function filterToD(tod) {
+                        if(tod%4==0) {
+                            tod = "<b><font color='Lime'>morning</font></b>, afternoon, evening and night";
+                            htmlText.html(title+body1+tod+body2);
+                            document.getElementById('morning-btn').click();
+                        };
+                        if(tod%4==1) {
+                            tod = "morning, <b><font color='Lime'>afternoon</font></b>, evening and night";
+                            htmlText.html(title+body1+tod+body2);
+                            document.getElementById('afternoon-btn').click();
+                        };
+                        if(tod%4==2) {
+                            tod = "morning, afternoon, <b><font color='Lime'>evening</font></b> and night";
+                            htmlText.html(title+body1+tod+body2);
+                            document.getElementById('evening-btn').click();
+                        };
+                        if(tod%4==3) {
+                            tod = "morning, afternoon, evening and <b><font color='Lime'>night</font></b>";
+                            htmlText.html(title+body1+tod+body2);
+                            document.getElementById('night-btn').click();
+                        };
+                    };
+                    var tod = 0;
+                    interval = setInterval(function () {
+                        filterToD(tod);
+                        tod++;
+                    }, 2000);
+                    
                 }
                 if (i == 4) {
+                    resetMap('origin');
+                    clearInterval(interval);
                     htmlText.html('Y')
                 }
                 if (i == 5) {
