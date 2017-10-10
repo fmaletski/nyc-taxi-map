@@ -15,15 +15,15 @@ import numpy as np
 # merge the parsed files
 frames = []
 for i in range(10):
-    frames.append(pd.read_csv('parsed{}.csv'.format(i)))
+    frames.append(pd.read_csv('./data/parsed{}.csv'.format(i)))
 data = pd.concat(frames)
 
 # drop unused column
 data.drop('Unnamed: 0', inplace = True, axis=1)
 
 # prototyping code
-#data.to_csv('parsed.csv')
-#locid = pd.read_csv('locid.csv')
+#data.to_csv('./data/parsed.csv')
+#locid = pd.read_csv('./data/locid.csv')
 
 def filterValues(data, field):
     """
@@ -85,5 +85,5 @@ for zone in zones:
                                  round(i*100/total, 2), ' %')
             i += 1
 
-with open('finalData.json', 'w') as f:
+with open('./data/finalData.json', 'w') as f:
     json.dump(finalData, f, separators=(',', ':'))

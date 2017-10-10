@@ -12,8 +12,8 @@ I've included the resulting files of running this module because it takes a long
 to parse the original data, around 9 hours using an i7-5820k 6 core hyper-threading processor.
 
 Usage:
-python parser.py interval
-eg. python parser.py 0
+python parser.py filename interval
+eg. python parser.py yellow_tripdata_2017-06.csv 0
 """
 
 import time
@@ -22,7 +22,11 @@ import pandas as pd
 
 start = time.time()
 print('importing: ', time.time()-start)
-data = pd.read_csv('yellow_tripdata_2017-06.csv')
+
+#get the filename
+
+fn = sys.argv[1]
+data = pd.read_csv('./data/{}'.format(fn))
 #locid = pd.read_csv('locid.csv') Unused in the final parser, kept here for future prototyping
 
 # drops unused columns to free up memory
@@ -120,7 +124,7 @@ filtersmp = [filters[intervalList[0]:intervalList[1]],
              filters[intervalList[9]:]]
 
 # gets the interval to parse
-interval = int(sys.argv[1])
+interval = int(sys.argv[2])
 
 filters = filtersmp[interval]
 

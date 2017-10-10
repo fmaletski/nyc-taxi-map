@@ -8,9 +8,9 @@ Merges the final dataset with the GeoJSON map information to be used by the HTML
 """
 import json
 
-data = json.load(open('finalData.json', 'rb'))
+data = json.load(open('./data/finalData.json', 'rb'))
 
-geo = json.load(open('zones.geojson', 'rb'))
+geo = json.load(open('./data/zones.geojson', 'rb'))
 
 # main loop
 for i in range(263):
@@ -20,5 +20,5 @@ for i in range(263):
         print(i+1) # used during prototyping to track missing data
 
 # write final GeoJSON dataset
-with open('data.geojson', 'w') as f:
+with open('./data/data.geojson', 'w') as f:
     json.dump(geo, f, separators=(',', ':'))
