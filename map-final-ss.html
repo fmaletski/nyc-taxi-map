@@ -223,7 +223,7 @@
                 .attr("class", "tooltip")
                 .style("opacity", 0);
 
-            //Animation
+            //Filter control for animation
             function resetMap(mode) {
                 if (mode=='origin') document.getElementById('origins-btn').click();
                 if (mode=='destination') document.getElementById('destinations-btn').click();
@@ -232,14 +232,18 @@
                 document.getElementById('log-btn').click();
                 if (lockScale == 'true') document.getElementById('lock-btn').click();
             }
+            //Animation
             function animate() {
                 resetMap('origin');
+
+                //Group for text box
                 var group = svg.append("g")
                     .attr('class', 'animation')
                     .attr("transform", function(d, i) {
                         return "translate(50,50)";
                     });
 
+                //Rectangle for text box
                 var rectangle = group.append("rect")
                     .attr("width", 450)
                     .attr("height", 600)
@@ -249,6 +253,8 @@
                 var textBox = group.append("g").attr("transform", function(d, i) {
                     return "translate(30,30)";
                 });
+
+                //Foreign (HTML) object and table of contents
                 var fo = textBox.append("foreignObject")
                     .attr('class', 'text-box')
                     .attr("width", 390)
@@ -260,6 +266,7 @@
                     .style('width', '390px')
                     .style('height', '500px');
 
+                //Text box
                 var htmlText = fo.append('tbody').style('height', '100%').append('tr')
                     .html("<h3>Introduction</h3><p>This choropleth, a map the uses color to show proportions, was created using the\
                NYC Taxi & Limousine Commission (TLC) trip data, more precisely, the June/2017 dataset.</p>\
@@ -271,6 +278,8 @@
                 it recalculate itself everytime a different filter is used. You can change the scale to \
                 linear and lock it using the buttons above.</p>\
                 <p>You can quit this animation and close this textbox anytime. To reopen it, click on 'Start Animation'.</p>");
+
+                //Buttons for animation control
                 var btns = fo.append('tfoot').append('table').style('width', '390px');
                 btns.append('td').append('button').attr('type', 'button')
                     .attr('class', 'btn btn-block btn-sm btn-outline-danger')
@@ -286,7 +295,11 @@
                         i = i + 1;
                     })
             };
+
+            //Interval declaration to be used between functions
             var interval;
+
+            //Animation flow control function
             function animateNext(htmlText, i) {  
                 if (i == 0) {
                     resetMap('origin');
@@ -450,15 +463,16 @@
                 if (i == 5) {
                     htmlText.html('C')
                 }
-                console.log(i);
             };
 
+            //Cleanly exit animation
             function endAnimation() {
                 clearInterval(interval)
                 d3.selectAll('path').style('stroke', 'black')
                 d3.select('.animation').remove()
             }
 
+            //Update the title to include filters
             function updateTitle(mode, time_of_day, weekday, logScale, lockScale) {
                 var titleMode = '';
                 var titleToD = '';
@@ -486,6 +500,7 @@
                 var title = titleMode + titleToD + titleWeek + titleScale + titleLock;
                 d3.select('#subtitle').text(title)
             };
+            
             //Projection
             //For some reason, firefox and chrome need different translate values for the projection
             var tx = 1125;
