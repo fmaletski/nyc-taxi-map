@@ -77,5 +77,6 @@ As this is an interactive visualization, it is important to create a pleasant UI
 
 To create an UI that is both beautiful and functional, I used Bootstrap (https://getbootstrap.com/docs/3.3/). By including all the necessary controls on the top of the page, the map becomes uncluttered and easier to understand.
 
-! [First layout] (https://github.com/fmaletski/nyc-taxi-map/raw/master/img/first-layout.png)
+<img src="./img/first-layout.png" alt="Drawing" style="width: 700px;"/>
 
+At this phase, no data was used to color the zones, and no button was working. It's just the basic layout. It can be visualized by accessing the [map-layout.html](./proto/map-layout.html) file.

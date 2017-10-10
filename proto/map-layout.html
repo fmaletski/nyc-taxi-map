@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+    <style>
+      #main {
+        width: 1100px
+      }          
+      #title {
+        text-align: center;
+      }
+      #subtitle {
+        text-align: center;
+      }
+      #tooltip {   
+        position: absolute;           
+        text-align: left;
+        padding: 20px;             
+        margin: 10px;
+        font: 12px sans-serif;        
+        background: lightsteelblue;   
+        border: 1px;      
+        border-radius: 2px;           
+        pointer-events: none;         
+      }
+      #tooltip h4{
+        margin:0;
+        margin-bottom: 0px;
+        font-size:14px;
+        font-weight: bold;
+        text-align: center;
+      }
+      #tooltip h5{
+        margin:0;
+        margin-bottom: 3px;
+        font-size:12px;
+        text-align: center;
+        font-style: italic;
+      }
+
+      #tooltip{
+        background:rgba(0,0,0,0.9);
+        border:1px solid grey;
+        border-radius:5px;
+        font-size:12px;
+        width:auto;
+        padding:4px;
+        color:white;
+        opacity:0;
+      }
+      #tooltip table{
+        table-layout:fixed;
+      }
+      #tooltip tr td{
+        padding:0;
+        margin:0;
+      }
+      #tooltip tr td:nth-child(1){
+        width:150px;
+      }
+      #tooltip tr td:nth-child(2){
+        text-align:center;
+      }
+    </style>
+    <script type="text/javascript">  
+      function draw(geo_data) {
+        "use strict";
+
+        var center = d3.geo.centroid(geo_data);
+
+        var width = 1100,
+            height = 1000;
+
+        var svg = d3.select("#main")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .append('g')
+            .attr('class', 'map');
+
+        svg.append('rect')
+          .attr('width', width)
+          .attr('height', height)
+          .style("fill", "gainsboro");
+
+        var div = d3.select("body").append("div")   
+          .attr("class", "tooltip")               
+          .style("opacity", 0);
+
+        var projection = d3.geo.mercator()
+                               .scale(100000)
+                               .translate([360, -375])
+                               .center(center);
+        
+        var path = d3.geo.path().projection(projection);
+
+        var zoneSelection = 'All'
+
+        function reset() {
+          d3.selectAll('path')
+            .style('fill', 'red');
+            d3.select('#subtitle')
+              .text('Origins')
+          zoneSelection = 'All';
+        }
+
+        var map = svg.selectAll('path')
+                     .data(geo_data.features)
+                     .enter()
+                     .append('path')
+                     .attr('d', path)
+                     .style('fill', 'red')
+                     .style('stroke', 'black')
+                     .style('stroke-width', 0.5)
+                     .on("mouseenter", function(d) {
+                        d3.select(this)
+                          .transition()
+                          .duration(200)
+                          .style("stroke-width", "3")
+                          .style('stroke', 'white');
+                        d3.select('#tooltip')
+                           .transition()        
+                           .duration(200)      
+                           .style("opacity", .8);      
+                        d3.select('#tooltip')
+                           .html("<h4>"+d.properties.zone+"</h4><table>"+
+                                  "<tr><h5>"+d.properties.borough+"</h5></tr>"+
+                                  "<tr><td>Origin Count: </td><td>"+2+"</td></tr>"+
+                                  "<tr><td>Destination Count: </td><td>"+3+"</td></tr>"+
+                                  "<tr><td>Average Trip Price</td><td>"+4+"</td></tr>"+
+                                  "</table>")  
+                           .style("left", (d3.event.pageX) + "px")     
+                           .style("top", (d3.event.pageY - 28) + "px");
+                     })
+                     .on("mouseleave", function(d) {
+                        d3.select(this)
+                          .transition()
+                          .duration(50)
+                          .style("stroke-width", "0.5")
+                          .style('stroke', 'black');
+                        d3.select("#tooltip").transition()
+                          .duration(500).style("opacity", 0);
+                     })
+                     .on("click", function(d) {
+                        if(d.properties.zone == zoneSelection) {
+                          reset();
+                        } else {
+                          zoneSelection = d.properties.zone;
+                          d3.selectAll('path')
+                            .style('fill', 'green')
+                          d3.select('#subtitle')
+                            .text(zoneSelection+' - '+d.properties.borough)
+                          d3.select(this)
+                            .transition()
+                            .duration(50)
+                            .style("fill", "cyan");
+                        };
+                     })
+        d3.select('#reset')
+          .on("click", function(d) {
+          reset();
+        })
+      };
+
+
+      </script>
+  </head>
+<body>
+  
+  <div id='main'>
+    <h1 id='title'>NYC Map</h1>
+    <h2 id='subtitle'>Origins</h2>
+    <table width='1107px'>
+      <th>
+        <div class="btn-group btn-group" data-toggle="buttons">
+          <label class="btn btn-primary active">
+            <input type="radio" name="options" id="origins-btn"> Origins
+          </label>
+          <label class="btn btn-primary">
+            <input type="radio" name="options" id="destinations-btn"> Destinations
+          </label>
+        </div>
+      </th>
+      <td>
+          <td>
+            <div class="btn-group btn-group" data-toggle="buttons">
+              <label class="btn btn-secondary active">
+                <input type="radio" name="options" id="all-day-btn"> All
+              </label>
+              <label class="btn btn-secondary">
+                <input type="radio" name="options" id="morning-btn"> Morning
+              </label>
+              <label class="btn btn-secondary">
+                  <input type="radio" name="options" id="afternoon-btn"> Afternoon
+              </label>
+              <label class="btn btn-secondary">
+                  <input type="radio" name="options" id="evening-btn"> Evening
+              </label>
+              <label class="btn btn-secondary">
+                  <input type="radio" name="options" id="night-btn"> Night
+              </label>
+            </div>
+          </td>
+          <td>
+            <div class="btn-group btn-group" data-toggle="buttons">
+                <label class="btn btn-secondary active">
+                  <input type="radio" name="options" id="all-week-btn"> All
+                </label>
+                <label class="btn btn-secondary">
+                  <input type="radio" name="options" id="weekdays-btn"> Weekdays
+                </label>
+                <label class="btn btn-secondary">
+                    <input type="radio" name="options" id="weekends-btn"> Weekends
+                </label>
+            </div>
+          </td>
+          <td>
+            <button type="button" class="btn btn-success" id='animation-btn'>
+              Start Animation
+            </button> 
+          </td>
+          <td>
+              <button type="button" class="btn btn-danger" width='1000px' id='reset-btn'>
+                  Reset Map
+              </button>
+          </td>
+      </td>
+    </table>
+  </div>
+  <div id="tooltip"></div><!-- div to hold tooltip. -->
+  <script type="text/javascript">
+  /*
+    Use D3 to load the GeoJSON file
+    */
+     d3.json("../data/zones.geojson", draw);
+  </script> 
+</body>
+</html>
