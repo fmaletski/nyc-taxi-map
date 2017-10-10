@@ -2,7 +2,7 @@
 by Fernando Maletski
 
 ## Summary
-This interactive data visualization illustrates when and where the NYC yellow taxis pick up and drop off passangers in the city. The data was obtained from the New York City Taxi & Limousine Commission.
+This interactive data visualization illustrates when and where the NYC yellow taxis pick up and drop off passengers in the city. The data was obtained from the New York City Taxi & Limousine Commission.
 
 ## Design
 
@@ -15,7 +15,7 @@ During prototyping, the location id translation dataset (https://s3.amazonaws.co
 
 The last dataset used is the shapefile (https://s3.amazonaws.com/nyc-tlc/misc/taxi_zones.zip), it was converted to GeoJSON using Gipong's shp2geojson.js (https://github.com/gipong/shp2geojson.js). The original file (taxi_zones.zip) and the resulting (zones.geojson) are included in this repository.
 
-Tranforming the dataset to its final form is done in a simple 3 step process. This design decision was made due to the large amount of time needed to complete each step, and compartmentalization of possible bugs.
+Transforming the dataset to its final form is done in a simple 3 step process. This design decision was made due to the large amount of time needed to complete each step, and compartmentalization of possible bugs.
 
 #### Initial parsing 
 Using the module parser.py, each trip is reduced to common attributes, eg. from JFK Airport to Lower East Side, during mornings on weekdays. The resulting trips are counted, and the average price is computed for each combination of attributes.
@@ -58,4 +58,24 @@ $ python3 finalDataWriter.py
 ```
 
 This final command concludes the ETL part of this project.
+
+### Map Design
+
+#### Shapefile to GeoJSON
+
+One surprising difficult step was converting the original NYC TLC shapefile to a format readable by D3.JS. The main problem was not converting the format per se, but the coordinate system.
+
+I first created python module using pyshp to handle the task, it was simple enough, but when I used the resulting file to draw the map, it was nowhere to be found! No amount of translation or D3.JS commands allowed me to find it.
+
+I tried using online tools, like http://mapshaper.org/, to no avail and more advanced programs like QGIS (qgis.org) when I discovered that the problem was that the coordinate reference system used by the shapefile was different than the one used by GeoJSON (https://tools.ietf.org/html/rfc7946#section-4).
+
+Surprisingly, one simple JS script created by Gipong called shp2geojson.js (https://github.com/gipong/shp2geojson.js) was the solution to my problems, thank you Gipong!
+
+#### Interface layout
+
+As this is an interactive visualization, it is important to create a pleasant UI for user, many times an ugly or overly complicated UI hampers otherwise great content.
+
+To create an UI that is both beautiful and functional, I used Bootstrap (https://getbootstrap.com/docs/3.3/). By including all the necessary controls on the top of the page, the map becomes uncluttered and easier to understand.
+
+! [First layout] (https://github.com/fmaletski/nyc-taxi-map/raw/master/img/first-layout.png)
 
