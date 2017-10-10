@@ -259,9 +259,9 @@
                 between using the number of trips that started or ended\
                in each zone, and to further filter the trips regarding the time of day and day of the week. The left\
                 mouse button and mouse wheel pan and zooms the map.</p>\
-                <p>By default, this visualization uses a dynamic logarithmic scales, in other words, \
+                <p>By default, this visualization uses a dynamic logarithmic scale, in other words, \
                 it recalculate itself everytime a different filter is used. You can change the scale to linear and lock it using the buttons above.</p>\
-                <p>You can quit this animation and close this textbox anytime. To reopen it, click on 'Start Animation'</p>");
+                <p>You can quit this animation and close this textbox anytime. To reopen it, click on 'Start Animation'.</p>");
                 var btns = fo.append('tfoot').append('table').style('width', '390px');
                 btns.append('td').append('button').attr('type', 'button')
                     .attr('class', 'btn btn-block btn-sm btn-outline-danger')
@@ -379,7 +379,7 @@
 
             function endAnimation() {
                 clearInterval(interval)
-                d3.selectAll('.path').style('stroke', 'black')
+                d3.selectAll('path').style('stroke', 'black')
                 d3.select('.animation').remove()
             }
 
