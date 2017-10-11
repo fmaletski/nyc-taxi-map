@@ -77,6 +77,36 @@ As this is an interactive visualization, it is important to create a pleasant UI
 
 To create an UI that is both beautiful and functional, I used Bootstrap (https://getbootstrap.com/docs/3.3/). By including all the necessary controls on the top of the page, the map becomes uncluttered and easier to understand.
 
-<img src="./img/first-layout.png" alt="Drawing" style="width: 700px;"/>
+<img src="./img/first-layout.png" alt="First Layout" style="width: 700px;"/>
 
 At this phase, no data was used to color the zones, and no button was working. It's just the basic layout. It can be visualized by accessing the [map-layout.html](./proto/map-layout.html) file.
+
+A curiosity is that this prototype supports clicking to select each zone. The idea was to enable the user to filter the data by zone, accessing information like, for example, the most common destination originating from it, and the average price of a trip to and from anywhere in New York. But due to the size of the final data, over 45MB, file I had to drop this feature.
+
+#### Scales
+
+Choosing the right way to present this dataset was not straightforward. While using a linear scale is the best way to compare the trip counts between the zones, Manhattan and the surrounding areas have orders of magnitude higher trip counts, resulting in a [mostly blank map](proto/map-linear.html). Therefore, I chose to use a [Napierian logarithmic scale](proto/map-log.html) (ln):
+
+<img src="./img/scales.png" alt="Different Scales" style="width: 700px;"/>
+
+Another design related decision was whether or not to use locked or dynamic scales. I chose the latter because the information I wanted to convey was the difference in density of trips by zones when filtering the dataset for time of day and weekday and not the absolute values. 
+
+However, this decision is controversial, as is the chosen logarithmic scale. Therefore, I added buttons for the user to choose how to present the data as he/she see fit during the interactive part of the visualization while defaulting to logarithmic/dynamic combo during the guided (animated) part.
+
+#### Tooltips
+
+The use of tooltips to show information about each zone while hovering it was a decision made early into the prototyping part of this project, as they add no clutter unless the user wants to access it.
+
+<img src="./img/tooltip.png" alt="Tooltip" style="width: 150px;"/>
+
+#### Animation and Interaction
+For the animation, I added a big text box that animates in conjunction with the map to guide the user into an explanatory experience before handing the visualization to be explored. I also used it to give a basic explanation of what it is about and how to use the choropleth. This box can be closed at anytime by clicking into the Quit button, and called again using the Start Animation button on the top bar, so returning users can go right into the exploration phase if they wish. The box also includes a Next button to control the flow of the animation and the map can be moved and zoomed using the mouse.
+
+<img src="./img/text-box.png" alt="TextBox" style="width: 300px;"/>
+
+#### Browser Compatibility
+One strange problem that I found was that the position of the map (translate) must be different when rendering the visualization using Firefox and Chrome, so I added a few lines of code to circumvent it.
+
+#### Final Result
+
+<img src="./img/final.png" alt="Final" style="width: 700px;"/>
