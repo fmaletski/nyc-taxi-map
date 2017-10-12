@@ -101,20 +101,6 @@
                         }
                         return colorScale(c);
                     });
-                d3.select('#tooltip')
-                    .html("<h4>" + function(d) {
-                            return d.properties.zone;
-                        } + "</h4><table>" +
-                        "<tr><h5>" + function(d) {
-                            return d.properties.borough;
-                        } + "</h5></tr>" +
-                        "<tr><td>Origin Count: </td><td>" + numberWithCommas(function(d) {
-                            return d.data[weekday][time_of_day][mode].count;
-                        }) + "</td></tr>" +
-                        "<tr><td>Average Trip Price:</td><td>" + function(d) {
-                            return d.data[weekday][time_of_day][mode].price;
-                        } + "</td></tr>" +
-                        "</table>");
             }
 
             //ColorScaleFunction
@@ -268,14 +254,14 @@
 
                 //Text box
                 var htmlText = fo.append('tbody').style('height', '100%').append('tr')
-                    .html("<h3>Introduction</h3><p>This choropleth, a map the uses color to show proportions, was created using the\
+                    .html("<h3>Introduction</h3><p>This choropleth, a map that uses color to show proportions, was created using the\
                NYC Taxi & Limousine Commission (TLC) trip data, more precisely, the June/2017 dataset.</p>\
-               <p>This is an interactive visualization, you can use the buttons at the top to alternate\
-                between using the number of trips that started or ended\
-               in each zone, and to further filter the trips regarding the time of day and day of the week. The left\
-                mouse button and mouse wheel pan and zooms the map.</p>\
-                <p>By default, this visualization uses a dynamic logarithmic scale, in other words, \
-                it recalculate itself everytime a different filter is used. You can change the scale to \
+               <p>This is an interactive visualization. You can use the buttons at the top to alternate\
+                between the number of trips that started or ended\
+               in each zone. And to further filter the trips regarding the time of day and day of the week. The left\
+                mouse button and mouse wheel pan and zoom the map.</p>\
+                <p>By default, this visualization uses a dynamic logarithmic scale. In other words, \
+                it recalculates itself every time a different filter is used. You can change the scale to \
                 linear and lock it using the buttons above.</p>\
                 <p>You can quit this animation and close this textbox anytime. To reopen it, click on 'Start Animation'.</p>");
 
@@ -319,56 +305,56 @@
                     d3.selectAll('#z179, #z8, #z223, #z207, #z129').style({
                         'stroke': 'violet'
                     });
-                    htmlText.html("<h3>Trip Origin analysis</h3>\
-          <p>It's no surprise that the most common trip origins are in <font color='cyan'>\
+                    htmlText.html("<h3>Trip Origin Analysis</h3>\
+          <p>It is no surprise that the most common trip origins are in <font color='cyan'>\
           Manhattan</font>\
-           it's the busiest part of New York City. But there's a few locations in Brooklyn\
-           and Queens that follow a bit behind.</p>\
-           <p>In Brooklyn, The <font color='yellow'>Williamsburg/Greenpoint</font> and <font color='orange'>\
-           DUMBO/Park Slope</font> regions are pretty busy, and in Queens the\
+           because it is the busiest borough of New York City. However, there are a few locations in Brooklyn\
+           and Queens that are comparable.</p>\
+           <p>In Brooklyn, the <font color='yellow'>Williamsburg/Greenpoint</font> and <font color='orange'>\
+           DUMBO/Park Slope</font> regions are quite busy. In Queens, the\
            <font color='green'>Long Island City/Sunnyside</font> and <font color='violet'>Astoria/Jackson Heights</font> \
            regions are also almost as busy as uptown Manhattan.</p>\
-           <p>The airports, LaGuardia and JFK, always have a lot of trips originating and destinating there, no matter the filters used,\
-           so we'll focus on the other regions throughout this animation.");
+           <p>The airports, LaGuardia and JFK, always have a lot of trips originating and destinating there, no matter the filters used.\
+           Therefore, we will focus on the other regions throughout this animation.");
                 }
                 if (i == 1) {
                     resetMap('origin');
                     function filterToD(tod) {
                         if(tod%4==0) {
-                            string2 = "<b><font color='Lime'>- Morning: 5am - 12pm</font></b> <br> - Afternoon: 12pm - 18pm<br>\
-                                      - Evening: 18pm - 22pm<br> - Night: 22pm - 5am<br>";
+                            string2 = "<b><font color='Lime'>- Morning: 5am - 12pm</font></b> <br> - Afternoon: 12pm - 6pm<br>\
+                                      - Evening: 6pm - 10pm<br> - Night: 10pm - 5am<br>";
                             htmlText.html(string1+string2+string3);
                             document.getElementById('morning-btn').click();
                         };
                         if(tod%4==1) {
-                            string2 = "- Morning: 5am - 12pm <br> <b><font color='Lime'>- Afternoon: 12pm - 18pm</font></b><br>\
-                                      - Evening: 18pm - 22pm<br> - Night: 22pm - 5am<br>";
+                            string2 = "- Morning: 5am - 12pm <br> <b><font color='Lime'>- Afternoon: 12pm - 6pm</font></b><br>\
+                                      - Evening: 6pm - 10pm<br> - Night: 10pm - 5am<br>";
                             htmlText.html(string1+string2+string3);
                             document.getElementById('afternoon-btn').click();
                         };
                         if(tod%4==2) {
-                            string2 = "- Morning: 5am - 12pm <br> - Afternoon: 12pm - 18pm<br>\
-                                   <b><font color='Lime'>- Evening: 18pm - 22pm</font></b><br> - Night: 22pm - 5am<br>";
+                            string2 = "- Morning: 5am - 12pm <br> - Afternoon: 12pm - 6pm<br>\
+                                   <b><font color='Lime'>- Evening: 6pm - 10pm</font></b><br> - Night: 10pm - 5am<br>";
                             htmlText.html(string1+string2+string3);
                             document.getElementById('evening-btn').click();
                         };
                         if(tod%4==3) {
-                            string2 = "- Morning: 5am - 12pm <br> - Afternoon: 12pm - 18pm<br>\
-                                      - Evening: 18pm - 22pm<br> <b><font color='Lime'>- Night: 22pm - 5am</font></b><br>";
+                            string2 = "- Morning: 5am - 12pm <br> - Afternoon: 12pm - 6pm<br>\
+                                      - Evening: 6pm - 10pm<br> <b><font color='Lime'>- Night: 10pm - 5am</font></b><br>";
                             htmlText.html(string1+string2+string3);
                             document.getElementById('night-btn').click();
                         };
                     };
-                    var string1 = "<h3>Trip Origin analysis</h3>\
+                    var string1 = "<h3>Trip Origin Analysis</h3>\
           <p>Subsetting the data for time of day:<br>";
-                    var string2 = "- Morning: 5am - 12pm<br> - Afternoon: 12pm - 18pm<br>\
-                                      - Evening: 18pm - 22pm<br> - Night: 22pm - 5am<br>";;
-                    var string3 = "<p>We can see that during mornings and afternoons, the movement on Wlliamsburg drops,\
-          but it regains strengh during evenings and nights, while Queens and DUMBO remains\
-          busy throughout the day, dropping slightly during evenings in the Queens case.</p>\
-          <p>This sugests that people in Manhattan, DUMBO and Queens use taxis to commute, while in \
-          Williamsburg it's more common to take a cab when going out, during evenings.</p> <p>In all these\
-          regions, using taxis to come back home during the night is a very popular choice.</p>";
+                    var string2 = "- Morning: 5am - 12pm<br> - Afternoon: 12pm - 6pm<br>\
+                                      - Evening: 6pm - 10pm<br> - Night: 10pm - 5am<br>";;
+                    var string3 = "<p>We can see that during mornings and afternoons, the movement in Wlliamsburg drops,\
+          but it regains strength during evenings and nights. Meanwhile, Queens and DUMBO remain\
+          busy throughout the day, decreasing slightly during evenings in Queens.</p>\
+          <p>This suggests that people in Manhattan, DUMBO and Queens use taxis to commute. While in \
+          Williamsburg, it is more common to take a cab when going out during evenings.</p> <p>In all these\
+          regions, using taxis to return home during the night is a very popular choice.</p>";
                     htmlText.html(string1+string2+string3);                     
                     var tod = 0;               
                     interval = setInterval(function () {
@@ -381,24 +367,24 @@
                     resetMap('origin');
                     d3.selectAll('path').style('stroke', 'black')
                     clearInterval(interval)
-                    var title = '<h3>Trip Destination analysis</h3>';
-                    var ori = 'origins';
+                    var title = '<h3>Trip Destination Analysis</h3>';
+                    var ori = 'origin';
                     var dest = 'destination';
                     var body1 = '<p>Changing the map to ';
-                    var body2 = " count, it becomes immeditelly noticible that the concentration of trips in Manhattan and its\
-                    surrounding areas, on Queens and Brooklyn, is less evident than when looking into "
-                    var body3 = ".</p><p>They are the most popular destinations, but the distribution is more even and goes \
+                    var body2 = " count mode, it becomes immediately noticeable that the concentration of trips in Manhattan and its\
+                    surrounding areas in Queens and Brooklyn drops. It becomes less evident than when looking into "
+                    var body3 = " count mode. They remain the most popular destinations, but the distribution of trips is more even and goes \
                     further into the outer boroughs.</p>";
                     htmlText.html(title+body1+dest+body2+ori+body3);
                     function changeMode(md) {
                         if(md%2==0) {                            
-                            var ori = 'origins';
+                            var ori = 'origin';
                             var dest = "<b><font color='Lime'>destination</font></b>";
                             htmlText.html(title+body1+dest+body2+ori+body3);
                             document.getElementById('destinations-btn').click();
                         };
                         if(md%2==1) {
-                            var ori = "<b><font color='Lime'>origins</font></b>";
+                            var ori = "<b><font color='Lime'>origin</font></b>";
                             var dest = 'destination';
                             htmlText.html(title+body1+dest+body2+ori+body3);
                             document.getElementById('origins-btn').click();
@@ -413,17 +399,16 @@
                 if (i == 3) {
                     resetMap('destination');
                     clearInterval(interval);
-                    var title = '<h3>Trip Destination analysis</h3>';
-                    var body1 = "<p>Changing the map to <b><font color='Lime'>destination</font></b> count, it becomes immeditelly \
-                    noticible that the concentration of trips in Manhattan and its\
-                    surrounding areas, on Queens and Brooklyn, is less evident than when looking into origins.</p><p>They are the most \
-                    popular destinations, but the distribution is more even and goes \
-                    further into the outer boroughs.</p>\
+                    var title = '<h3>Trip Destination Analysis</h3>';
+                    var body1 = "<p>Changing the map to <b><font color='Lime'>destination</font></b> count mode, it becomes immediately \
+                    noticeable that the concentration of trips in Manhattan and its surrounding areas in Queens and Brooklyn drops. It \
+                    becomes less evident than when looking into origin count mode. They remain the most popular destinations, but \
+                    the distribution of trips is more even and goes further into the outer boroughs.</p>\
                     <p>Filtering it for the time of day (";
                     var tod = "morning, afternoon, evening and night";
-                    body2 = ") show us that this behaviour, while present even early in the mornings, is increasely strong as the day\
-                    goes by.</p><p>Further confirming the hypothesis that newyorkers like to use taxis to come home after going out \
-                    in the evening.";
+                    body2 = ") shows us that this behavior, while present even early in the mornings, is increasingly stronger as the day\
+                    goes by.</p><p>This information further strengthens the hypothesis that New Yorkers like using taxis to return home after going out \
+                    in the evening, even if the trip becomes comparatively long, and costly.";
                     htmlText.html(title+body1+tod+body2);
                     document.getElementById('destinations-btn').click();
                     function filterToD(tod) {
@@ -458,10 +443,16 @@
                 if (i == 4) {
                     resetMap('origin');
                     clearInterval(interval);
-                    htmlText.html('Y')
+                    var title = "<h3>Outro</h3>";
+                    var body = "<p>This concludes the guided part of this visualization.</p>\
+                    <p>Using the provided filters and modes, there are many hypothesis and conclusions to be found. \
+                    We have not even touched the Weekday filter!</p>\
+                    <p>Therefore, we encourage you, the user, to explore on your own, maybe you will find something\
+                    interesting we missed.</p><p><b>Have fun!</b></p>";
+                    htmlText.html(title+body);
                 }
                 if (i == 5) {
-                    htmlText.html('C')
+                    endAnimation();
                 }
             };
 
@@ -505,9 +496,10 @@
             //For some reason, firefox and chrome need different translate values for the projection
             var tx = 1125;
             var ty = -35;
+            
             if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
-                tx = 450;
-                ty = -265;
+                tx = 975;
+                ty = -115;
             };
 
             var projection = d3.geo.mercator()
@@ -689,7 +681,7 @@
 <body>
 
     <div id='main'>
-        <h1 id='title'>NYC Taxi & Limousine Commission Map - June/2017</h1>
+        <h1 id='title'>NYC Taxi & Limousine Commission Trip Map - June/2017</h1>
         <h2 id='subtitle'>Origins</h2>
         <table width='1107px'>
             <td>
