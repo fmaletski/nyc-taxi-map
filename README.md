@@ -4,7 +4,15 @@ by Fernando Maletski
 ## Summary
 This interactive data visualization illustrates when and where the NYC yellow taxis pick up and drop off passengers in the city. The data was obtained from the New York City Taxi & Limousine Commission.
 
+By filtering the data using the interactive features, many observations can be made, such as the busiest parts of the city, when and where New Yorkers like to take cabs, how this preference varies during the day, and the days of the week, and much more.
+
 ## Design
+
+Early when thinking about how to visualize this dataset, a choropleth was chosen. Using a map to show the locations and color hues to encode the information is a familiar and effective way to illustrate this dataset.
+
+To create the project, a clean and concise dataset needed to be created, due to limitations to browsers capacity to work with large datasets. This process is the subject of the first part of this section, ETL.
+
+The map design and creation is what the second section is about.
 
 ### ETL (Extract, Transform, Load)
 The data was downloaded from the NYC TLC website (http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml). Due to the size of the dataset, I chose to use just the latest yellow taxi file, June 2017 (https://s3.amazonaws.com/nyc-tlc/trip+data/yellow_tripdata_2017-06.csv), but the modules and the visualization html created are able to handle any data from this source with minimal to no modification.
@@ -110,3 +118,43 @@ One strange problem that I found was that the position of the map (translate) mu
 #### Final Result
 
 <img src="./img/final.png" alt="Final" style="width: 700px;"/>
+
+## Feedback
+
+During the design and construction of this project, I received a lot of feedback from family, friends and coworkers.
+Listed below are the ones that I found most useful, in their words, and the changes I made:
+
+#### Feedback 1
+
+* You need a legend for the scale, and it should be clear to the user what type of data transformation you used to create it. 
+
+*Added a scale and buttons for the user to lock it, and choose their preferred one, and information about it to the second title (subtitle).*
+
+* The map is too big for my laptop, I have to scroll to view all of it. 
+ 
+*Changed the svg height attribute to 800, from 1100.*
+
+#### Feedback 2
+
+* There's a few problems with the text you used in the animation, some information is not clear.
+
+*Worked with her to correct the mistakes and streamline the text, making it easier to understand.*
+
+#### Feedback 3
+
+* The map is cropped on my screen, there should be a way to pan and zoom it.
+
+*Added pan and zoom function to the visualization. Discovered that for some reason, Firefox and Chrome need different 'translate' values when creating the projection, fixed this using a conditional statement.*
+
+
+## Resources
+
+* Tooltips inspired by http://bl.ocks.org/scresawn/6b3e4d2bc20cf4e7856b93134aa82d58
+* Bootstrap buttons https://v4-alpha.getbootstrap.com/components/buttons/
+* Colorbrewer scales https://stackoverflow.com/questions/40328984/how-to-use-a-colorbrewer-scale
+* Finding the center of a geojson https://stackoverflow.com/questions/14492284/center-a-map-in-d3-given-a-geojson-object
+* Number with commas https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript/2901298#2901298
+* SVG foreignObject tooltips in D3 http://bl.ocks.org/jebeck/10699411
+* How to detect Firefox, Chrome and Internet Explorer with JavaScript https://php.quicoto.com/how-to-detect-firefox-chrome-and-internet-explorer-with-javascript/
+* Zoom and pan https://bl.ocks.org/mbostock/3680999
+* Gipong's shp2geojson.js https://github.com/gipong/shp2geojson.js

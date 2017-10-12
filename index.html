@@ -3,25 +3,29 @@
 
 <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
+        crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1"
+        crossorigin="anonymous"></script>
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script src="http://colorbrewer2.org/export/colorbrewer.js"></script>
     <style>
         #main {
             width: 1100px
         }
-        
+
         #title {
             text-align: center;
         }
-        
+
         #subtitle {
             text-align: center;
         }
-        
+
         #tooltip {
             position: absolute;
             text-align: left;
@@ -37,7 +41,7 @@
             color: white;
             opacity: 0;
         }
-        
+
         #tooltip h4 {
             margin: 0;
             margin-bottom: 0px;
@@ -45,7 +49,7 @@
             font-weight: bold;
             text-align: center;
         }
-        
+
         #tooltip h5 {
             margin: 0;
             margin-bottom: 3px;
@@ -53,20 +57,20 @@
             text-align: center;
             font-style: italic;
         }
-        
+
         #tooltip table {
             table-layout: fixed;
         }
-        
+
         #tooltip tr td {
             padding: 0;
             margin: 0;
         }
-        
+
         #tooltip tr td:nth-child(1) {
             width: 150px;
         }
-        
+
         #tooltip tr td:nth-child(2) {
             text-align: center;
         }
@@ -92,7 +96,7 @@
                 };
                 map.transition()
                     .duration(500)
-                    .style('fill', function(d) {
+                    .style('fill', function (d) {
                         if (logScale == 'true') {
                             var c = Math.log(d.data[weekday][time_of_day][mode].count);
                         }
@@ -116,7 +120,7 @@
                         .range(reds);
                 }
                 var maxcount =
-                    scale.domain([0, d3.max(geo_data.features, function(d) {
+                    scale.domain([0, d3.max(geo_data.features, function (d) {
                         var c;
                         if (logScale == 'true') {
                             c = Math.log(d.data[weekday][time_of_day][mode].count);
@@ -127,17 +131,17 @@
                         return c;
                     })]);
                 var legend = scale.range().map(scale.invertExtent)
-                    .map(function(d) {
+                    .map(function (d) {
                         return d[1];
                     })
-                    .map(function(d) {
+                    .map(function (d) {
                         if (logScale == 'true') {
                             return Math.exp(d);
                         } else {
                             return +d;
                         }
                     })
-                    .map(function(d, i) {
+                    .map(function (d, i) {
                         return [Math.round(d), reds[i]];
                     });
                 d3.selectAll('.legend-text').remove()
@@ -151,22 +155,22 @@
                 selection.append('rect')
                     .attr('width', 122.2)
                     .attr('height', 5)
-                    .attr('transform', function(d, i) {
+                    .attr('transform', function (d, i) {
                         return 'translate(' + ((i - 1) * 122.2) + ',0)';
                     })
-                    .style('fill', function(d) {
+                    .style('fill', function (d) {
                         return d[1];
                     });
                 d3.selectAll('#legend')
                     .append('text')
                     .attr('class', 'legend-text')
-                    .attr('x', function(d, i) {
+                    .attr('x', function (d, i) {
                         return 122.2 * (i);
                     })
                     .attr('y', 17)
                     .style('text-anchor', 'end')
                     .style('fill', 'black')
-                    .text(function(d) {
+                    .text(function (d) {
                         return numberWithCommas(d[0]).toString();
                     });
                 d3.select('svg').append('text').attr('x', 10).attr('y', 17)
@@ -211,10 +215,10 @@
 
             //Filter control for animation
             function resetMap(mode) {
-                if (mode=='origin') document.getElementById('origins-btn').click();
-                if (mode=='destination') document.getElementById('destinations-btn').click();
+                if (mode == 'origin') document.getElementById('origins-btn').click();
+                if (mode == 'destination') document.getElementById('destinations-btn').click();
                 document.getElementById('all-day-btn').click();
-                document.getElementById('all-week-btn').click();                
+                document.getElementById('all-week-btn').click();
                 document.getElementById('log-btn').click();
                 if (lockScale == 'true') document.getElementById('lock-btn').click();
             }
@@ -225,7 +229,7 @@
                 //Group for text box
                 var group = svg.append("g")
                     .attr('class', 'animation')
-                    .attr("transform", function(d, i) {
+                    .attr("transform", function (d, i) {
                         return "translate(50,50)";
                     });
 
@@ -236,7 +240,7 @@
                     .attr('rx', 5)
                     .attr('ry', 5)
                     .style('opacity', .8);
-                var textBox = group.append("g").attr("transform", function(d, i) {
+                var textBox = group.append("g").attr("transform", function (d, i) {
                     return "translate(30,30)";
                 });
 
@@ -254,7 +258,8 @@
 
                 //Text box
                 var htmlText = fo.append('tbody').style('height', '100%').append('tr')
-                    .html("<h3>Introduction</h3><p>This choropleth, a map that uses color to show proportions, was created using the\
+                    .html(
+                        "<h3>Introduction</h3><p>This choropleth, a map that uses color to show proportions, was created using the\
                NYC Taxi & Limousine Commission (TLC) trip data, more precisely, the June/2017 dataset.</p>\
                <p>This is an interactive visualization. You can use the buttons at the top to alternate\
                 between the number of trips that started or ended\
@@ -263,7 +268,8 @@
                 <p>By default, this visualization uses a dynamic logarithmic scale. In other words, \
                 it recalculates itself every time a different filter is used. You can change the scale to \
                 linear and lock it using the buttons above.</p>\
-                <p>You can quit this animation and close this textbox anytime. To reopen it, click on 'Start Animation'.</p>");
+                <p>You can quit this animation and close this textbox anytime. To reopen it, click on 'Start Animation'.</p>"
+                    );
 
                 //Buttons for animation control
                 var btns = fo.append('tfoot').append('table').style('width', '390px');
@@ -275,7 +281,7 @@
                 btns.append('td').append('button').attr('type', 'button')
                     .attr('class', 'btn btn-block btn-sm btn-outline-primary')
                     .attr('id', 'next-btn').html('Next')
-                    .on('click', function() {
+                    .on('click', function () {
                         clearInterval(interval)
                         animateNext(htmlText, i);
                         i = i + 1;
@@ -286,11 +292,11 @@
             var interval;
 
             //Animation flow control function
-            function animateNext(htmlText, i) {  
+            function animateNext(htmlText, i) {
                 if (i == 0) {
                     resetMap('origin');
                     d3.selectAll('.Manhattan').style({
-                    'stroke': 'cyan'
+                        'stroke': 'cyan'
                     });
                     d3.selectAll('#z112, #z255, #z256, #z80').style({
                         'stroke': 'yellow'
@@ -305,7 +311,8 @@
                     d3.selectAll('#z179, #z8, #z223, #z207, #z129').style({
                         'stroke': 'violet'
                     });
-                    htmlText.html("<h3>Trip Origin Analysis</h3>\
+                    htmlText.html(
+                        "<h3>Trip Origin Analysis</h3>\
           <p>It is no surprise that the most common trip origins are in <font color='cyan'>\
           Manhattan</font>\
            because it is the busiest borough of New York City. However, there are a few locations in Brooklyn\
@@ -315,52 +322,61 @@
            <font color='green'>Long Island City/Sunnyside</font> and <font color='violet'>Astoria/Jackson Heights</font> \
            regions are also almost as busy as uptown Manhattan.</p>\
            <p>The airports, LaGuardia and JFK, always have a lot of trips originating and destinating there, no matter the filters used.\
-           Therefore, we will focus on the other regions throughout this animation.");
+           Therefore, we will focus on the other regions throughout this animation."
+                    );
                 }
                 if (i == 1) {
                     resetMap('origin');
+
                     function filterToD(tod) {
-                        if(tod%4==0) {
-                            string2 = "<b><font color='Lime'>- Morning: 5am - 12pm</font></b> <br> - Afternoon: 12pm - 6pm<br>\
+                        if (tod % 4 == 0) {
+                            string2 =
+                                "<b><font color='Lime'>- Morning: 5am - 12pm</font></b> <br> - Afternoon: 12pm - 6pm<br>\
                                       - Evening: 6pm - 10pm<br> - Night: 10pm - 5am<br>";
-                            htmlText.html(string1+string2+string3);
+                            htmlText.html(string1 + string2 + string3);
                             document.getElementById('morning-btn').click();
                         };
-                        if(tod%4==1) {
-                            string2 = "- Morning: 5am - 12pm <br> <b><font color='Lime'>- Afternoon: 12pm - 6pm</font></b><br>\
+                        if (tod % 4 == 1) {
+                            string2 =
+                                "- Morning: 5am - 12pm <br> <b><font color='Lime'>- Afternoon: 12pm - 6pm</font></b><br>\
                                       - Evening: 6pm - 10pm<br> - Night: 10pm - 5am<br>";
-                            htmlText.html(string1+string2+string3);
+                            htmlText.html(string1 + string2 + string3);
                             document.getElementById('afternoon-btn').click();
                         };
-                        if(tod%4==2) {
-                            string2 = "- Morning: 5am - 12pm <br> - Afternoon: 12pm - 6pm<br>\
+                        if (tod % 4 == 2) {
+                            string2 =
+                                "- Morning: 5am - 12pm <br> - Afternoon: 12pm - 6pm<br>\
                                    <b><font color='Lime'>- Evening: 6pm - 10pm</font></b><br> - Night: 10pm - 5am<br>";
-                            htmlText.html(string1+string2+string3);
+                            htmlText.html(string1 + string2 + string3);
                             document.getElementById('evening-btn').click();
                         };
-                        if(tod%4==3) {
-                            string2 = "- Morning: 5am - 12pm <br> - Afternoon: 12pm - 6pm<br>\
+                        if (tod % 4 == 3) {
+                            string2 =
+                                "- Morning: 5am - 12pm <br> - Afternoon: 12pm - 6pm<br>\
                                       - Evening: 6pm - 10pm<br> <b><font color='Lime'>- Night: 10pm - 5am</font></b><br>";
-                            htmlText.html(string1+string2+string3);
+                            htmlText.html(string1 + string2 + string3);
                             document.getElementById('night-btn').click();
                         };
                     };
-                    var string1 = "<h3>Trip Origin Analysis</h3>\
+                    var string1 =
+                        "<h3>Trip Origin Analysis</h3>\
           <p>Subsetting the data for time of day:<br>";
-                    var string2 = "- Morning: 5am - 12pm<br> - Afternoon: 12pm - 6pm<br>\
+                    var string2 =
+                        "- Morning: 5am - 12pm<br> - Afternoon: 12pm - 6pm<br>\
                                       - Evening: 6pm - 10pm<br> - Night: 10pm - 5am<br>";;
-                    var string3 = "<p>We can see that during mornings and afternoons, the movement in Wlliamsburg drops,\
+                    var string3 =
+                        "<p>We can see that during mornings and afternoons, the movement in Wlliamsburg drops,\
           but it regains strength during evenings and nights. Meanwhile, Queens and DUMBO remain\
           busy throughout the day, decreasing slightly during evenings in Queens.</p>\
           <p>This suggests that people in Manhattan, DUMBO and Queens use taxis to commute. While in \
           Williamsburg, it is more common to take a cab when going out during evenings.</p> <p>In all these\
           regions, using taxis to return home during the night is a very popular choice.</p>";
-                    htmlText.html(string1+string2+string3);                     
-                    var tod = 0;               
+                    htmlText.html(string1 + string2 + string3);
+                    var tod = 0;
                     interval = setInterval(function () {
                         filterToD(tod);
                         tod++;
-                    }, 2000);                    
+                    }, 2000);
                 }
 
                 if (i == 2) {
@@ -371,22 +387,25 @@
                     var ori = 'origin';
                     var dest = 'destination';
                     var body1 = '<p>Changing the map to ';
-                    var body2 = " count mode, it becomes immediately noticeable that the concentration of trips in Manhattan and its\
+                    var body2 =
+                        " count mode, it becomes immediately noticeable that the concentration of trips in Manhattan and its\
                     surrounding areas in Queens and Brooklyn drops. It becomes less evident than when looking into "
-                    var body3 = " count mode. They remain the most popular destinations, but the distribution of trips is more even and goes \
+                    var body3 =
+                        " count mode. They remain the most popular destinations, but the distribution of trips is more even and goes \
                     further into the outer boroughs.</p>";
-                    htmlText.html(title+body1+dest+body2+ori+body3);
+                    htmlText.html(title + body1 + dest + body2 + ori + body3);
+
                     function changeMode(md) {
-                        if(md%2==0) {                            
+                        if (md % 2 == 0) {
                             var ori = 'origin';
                             var dest = "<b><font color='Lime'>destination</font></b>";
-                            htmlText.html(title+body1+dest+body2+ori+body3);
+                            htmlText.html(title + body1 + dest + body2 + ori + body3);
                             document.getElementById('destinations-btn').click();
                         };
-                        if(md%2==1) {
+                        if (md % 2 == 1) {
                             var ori = "<b><font color='Lime'>origin</font></b>";
                             var dest = 'destination';
-                            htmlText.html(title+body1+dest+body2+ori+body3);
+                            htmlText.html(title + body1 + dest + body2 + ori + body3);
                             document.getElementById('origins-btn').click();
                         }
                     };
@@ -400,36 +419,39 @@
                     resetMap('destination');
                     clearInterval(interval);
                     var title = '<h3>Trip Destination Analysis</h3>';
-                    var body1 = "<p>Changing the map to <b><font color='Lime'>destination</font></b> count mode, it becomes immediately \
+                    var body1 =
+                        "<p>Changing the map to <b><font color='Lime'>destination</font></b> count mode, it becomes immediately \
                     noticeable that the concentration of trips in Manhattan and its surrounding areas in Queens and Brooklyn drops. It \
                     becomes less evident than when looking into origin count mode. They remain the most popular destinations, but \
                     the distribution of trips is more even and goes further into the outer boroughs.</p>\
                     <p>Filtering it for the time of day (";
                     var tod = "morning, afternoon, evening and night";
-                    body2 = ") shows us that this behavior, while present even early in the mornings, is increasingly stronger as the day\
+                    body2 =
+                        ") shows us that this behavior, while present even early in the mornings, is increasingly stronger as the day\
                     goes by.</p><p>This information further strengthens the hypothesis that New Yorkers like using taxis to return home after going out \
                     in the evening, even if the trip becomes comparatively long, and costly.";
-                    htmlText.html(title+body1+tod+body2);
+                    htmlText.html(title + body1 + tod + body2);
                     document.getElementById('destinations-btn').click();
+
                     function filterToD(tod) {
-                        if(tod%4==0) {
+                        if (tod % 4 == 0) {
                             tod = "<b><font color='Lime'>morning</font></b>, afternoon, evening and night";
-                            htmlText.html(title+body1+tod+body2);
+                            htmlText.html(title + body1 + tod + body2);
                             document.getElementById('morning-btn').click();
                         };
-                        if(tod%4==1) {
+                        if (tod % 4 == 1) {
                             tod = "morning, <b><font color='Lime'>afternoon</font></b>, evening and night";
-                            htmlText.html(title+body1+tod+body2);
+                            htmlText.html(title + body1 + tod + body2);
                             document.getElementById('afternoon-btn').click();
                         };
-                        if(tod%4==2) {
+                        if (tod % 4 == 2) {
                             tod = "morning, afternoon, <b><font color='Lime'>evening</font></b> and night";
-                            htmlText.html(title+body1+tod+body2);
+                            htmlText.html(title + body1 + tod + body2);
                             document.getElementById('evening-btn').click();
                         };
-                        if(tod%4==3) {
+                        if (tod % 4 == 3) {
                             tod = "morning, afternoon, evening and <b><font color='Lime'>night</font></b>";
-                            htmlText.html(title+body1+tod+body2);
+                            htmlText.html(title + body1 + tod + body2);
                             document.getElementById('night-btn').click();
                         };
                     };
@@ -438,18 +460,19 @@
                         filterToD(tod);
                         tod++;
                     }, 2000);
-                    
+
                 }
                 if (i == 4) {
                     resetMap('origin');
                     clearInterval(interval);
                     var title = "<h3>Outro</h3>";
-                    var body = "<p>This concludes the guided part of this visualization.</p>\
+                    var body =
+                        "<p>This concludes the guided part of this visualization.</p>\
                     <p>Using the provided filters and modes, there are many hypothesis and conclusions to be found. \
-                    We have not even touched the Weekday filter!</p>\
+                    We have not even touched the weekday filter!</p>\
                     <p>Therefore, we encourage you, the user, to explore on your own, maybe you will find something\
                     interesting we missed.</p><p><b>Have fun!</b></p>";
-                    htmlText.html(title+body);
+                    htmlText.html(title + body);
                 }
                 if (i == 5) {
                     endAnimation();
@@ -491,12 +514,12 @@
                 var title = titleMode + titleToD + titleWeek + titleScale + titleLock;
                 d3.select('#subtitle').text(title)
             };
-            
+
             //Projection
             //For some reason, firefox and chrome need different translate values for the projection
             var tx = 1125;
             var ty = -35;
-            
+
             if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
                 tx = 975;
                 ty = -115;
@@ -519,23 +542,22 @@
                 .enter()
                 .append('path')
                 .attr('d', path)
-                .attr('class', function(d) {
+                .attr('class', function (d) {
                     return d.properties.borough
                 })
-                .attr('id', function(d) {
+                .attr('id', function (d) {
                     return 'z' + d.properties.LocationID
                 })
-                .style('fill', function(d) {
+                .style('fill', function (d) {
                     return colorScale(Math.log(d.data[weekday][time_of_day][mode].count));
                 })
                 .style('stroke', 'black')
                 .style('stroke-width', 1)
-                .on("mouseenter", function(d) {
+                .on("mouseenter", function (d) {
                     var testStyle = d3.select(this).style('stroke')
-                    if(testStyle != 'black') {
+                    if (testStyle != 'black') {
                         prevColor = testStyle;
-                    }
-                    else {
+                    } else {
                         prevColor = 'black';
                     };
                     d3.select(this)
@@ -549,13 +571,15 @@
                     d3.select('#tooltip')
                         .html("<h4>" + d.properties.zone + "</h4><table>" +
                             "<tr><h5>" + d.properties.borough + "</h5></tr>" +
-                            "<tr><td>Origin Count: </td><td>" + numberWithCommas(d.data[weekday][time_of_day][mode].count) + "</td></tr>" +
-                            "<tr><td>Average Trip Price:</td><td>" + d.data[weekday][time_of_day][mode].price + "</td></tr>" +
+                            "<tr><td>Origin Count: </td><td>" + numberWithCommas(d.data[weekday][time_of_day][mode]
+                                .count) + "</td></tr>" +
+                            "<tr><td>Average Trip Price:</td><td>" + d.data[weekday][time_of_day][mode].price +
+                            "</td></tr>" +
                             "</table>")
                         .style("left", (d3.event.pageX) + "px")
                         .style("top", (d3.event.pageY - 28) + "px");
                 })
-                .on("mouseleave", function(d) {
+                .on("mouseleave", function (d) {
                     d3.select(this)
                         .transition()
                         .duration(200)
@@ -569,87 +593,87 @@
             //Button bindings
 
             d3.select('#reset-btn')
-                .on("click", function(d) {
+                .on("click", function (d) {
                     reset();
                 })
 
             //Mode selection
             d3.select('#origins-btn')
-                .on("click", function(d) {
+                .on("click", function (d) {
                     mode = 'origin';
                     redraw(geo_data, mode, weekday, time_of_day, logScale);
                 })
 
             d3.select('#destinations-btn')
-                .on("click", function(d) {
+                .on("click", function (d) {
                     mode = 'destination';
                     redraw(geo_data, mode, weekday, time_of_day, logScale);
                 })
 
             //Time of day selection
             d3.select('#all-day-btn')
-                .on("click", function(d) {
+                .on("click", function (d) {
                     time_of_day = 'all';
                     redraw(geo_data, mode, weekday, time_of_day, logScale);
                 })
 
             d3.select('#morning-btn')
-                .on("click", function(d) {
+                .on("click", function (d) {
                     time_of_day = 'morning';
                     redraw(geo_data, mode, weekday, time_of_day, logScale);
                 })
 
             d3.select('#afternoon-btn')
-                .on("click", function(d) {
+                .on("click", function (d) {
                     time_of_day = 'afternoon';
                     redraw(geo_data, mode, weekday, time_of_day, logScale);
                 })
 
             d3.select('#evening-btn')
-                .on("click", function(d) {
+                .on("click", function (d) {
                     time_of_day = 'evening';
                     redraw(geo_data, mode, weekday, time_of_day, logScale);
                 })
 
             d3.select('#night-btn')
-                .on("click", function(d) {
+                .on("click", function (d) {
                     time_of_day = 'night';
                     redraw(geo_data, mode, weekday, time_of_day, logScale);
                 })
 
             //Weekday selection
             d3.select('#all-week-btn')
-                .on("click", function(d) {
+                .on("click", function (d) {
                     weekday = 'all';
                     redraw(geo_data, mode, weekday, time_of_day, logScale);
                 })
 
             d3.select('#weekdays-btn')
-                .on("click", function(d) {
+                .on("click", function (d) {
                     weekday = 'weekday';
                     redraw(geo_data, mode, weekday, time_of_day, logScale);
                 })
 
             d3.select('#weekends-btn')
-                .on("click", function(d) {
+                .on("click", function (d) {
                     weekday = 'weekend';
                     redraw(geo_data, mode, weekday, time_of_day, logScale);
                 })
 
             //Scale selection
             d3.select('#log-btn')
-                .on("click", function(d) {
+                .on("click", function (d) {
                     logScale = 'true';
                     redraw(geo_data, mode, weekday, time_of_day, logScale);
                 })
 
             d3.select('#linear-btn')
-                .on("click", function(d) {
+                .on("click", function (d) {
                     logScale = 'false';
                     redraw(geo_data, mode, weekday, time_of_day, logScale);
                 })
             d3.select('#lock-btn')
-                .on("click", function(d) {
+                .on("click", function (d) {
                     if (lockScale == 'false') {
                         lockScale = 'true';
                         d3.select('#lock-btn').text('Unlock Scale')
@@ -659,15 +683,15 @@
                     };
                     redraw(geo_data, mode, weekday, time_of_day, logScale);
                 })
-                //Animation
+            //Animation
             d3.select('#animation-btn')
-                .on("click", function(d) {
+                .on("click", function (d) {
                     animate();
                 })
 
             // zoom and pan
             var zoom = d3.behavior.zoom()
-                .on("zoom", function() {
+                .on("zoom", function () {
                     g.attr("transform", "translate(" +
                         d3.event.translate.join(",") + ")scale(" + d3.event.scale + ")");
                 });
@@ -687,61 +711,61 @@
             <td>
                 <div class="btn-group" data-toggle="buttons">
                     <label class="btn btn-primary active btn-sm" id="origins-btn">
-            <input type="radio" name="options"> Origins
-          </label>
+                        <input type="radio" name="options"> Origins
+                    </label>
                     <label class="btn btn-primary btn-sm" id="destinations-btn">
-            <input type="radio" name="options"> Destinations
-          </label>
+                        <input type="radio" name="options"> Destinations
+                    </label>
                 </div>
             </td>
             <td>
                 <div class="btn-group" data-toggle="buttons">
                     <label class="btn btn-secondary active btn-sm" id="all-day-btn">
-                <input type="radio" name="options" class='all-btn'> All
-              </label>
+                        <input type="radio" name="options" class='all-btn'> All
+                    </label>
                     <label class="btn btn-secondary btn-sm" id="morning-btn">
-                <input type="radio" name="options"> Morning
-              </label>
+                        <input type="radio" name="options"> Morning
+                    </label>
                     <label class="btn btn-secondary btn-sm" id="afternoon-btn">
-                  <input type="radio" name="options"> Afternoon
-              </label>
+                        <input type="radio" name="options"> Afternoon
+                    </label>
                     <label class="btn btn-secondary btn-sm" id="evening-btn">
-                  <input type="radio" name="options"> Evening
-              </label>
+                        <input type="radio" name="options"> Evening
+                    </label>
                     <label class="btn btn-secondary btn-sm" id="night-btn">
-                  <input type="radio" name="options"> Night
-              </label>
+                        <input type="radio" name="options"> Night
+                    </label>
                 </div>
             </td>
             <td>
                 <div class="btn-group" data-toggle="buttons">
                     <label class="btn btn-secondary active btn-sm" id="all-week-btn">
-                  <input type="radio" name="options"> All
-                </label>
+                        <input type="radio" name="options"> All
+                    </label>
                     <label class="btn btn-secondary btn-sm" id="weekdays-btn">
-                  <input type="radio" name="options"> Weekdays
-                </label>
+                        <input type="radio" name="options"> Weekdays
+                    </label>
                     <label class="btn btn-secondary btn-sm" id="weekends-btn">
-                    <input type="radio" name="options"> Weekends
-                </label>
+                        <input type="radio" name="options"> Weekends
+                    </label>
                 </div>
             </td>
             <td>
                 <div class="btn-group" data-toggle="buttons">
                     <label class="btn btn-primary active btn-sm" id="log-btn">
-                <input type="radio" name="options"> Log Scale
-              </label>
+                        <input type="radio" name="options"> Log Scale
+                    </label>
                     <label class="btn btn-primary btn-sm" id="linear-btn">
-                <input type="radio" name="options"> Linear Scale
-              </label>
+                        <input type="radio" name="options"> Linear Scale
+                    </label>
                     <button type="button" class="btn btn-danger btn-sm" id='lock-btn'>
-                Lock Scale
-            </button>
+                        Lock Scale
+                    </button>
             </td>
             <td>
                 <button type="button" class="btn btn-success btn-sm" id='animation-btn'>
-              Start Animation
-            </button>
+                    Start Animation
+                </button>
             </td>
         </table>
         </div>
