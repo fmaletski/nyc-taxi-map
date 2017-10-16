@@ -1,6 +1,8 @@
 # NYC Taxi & Limousine Commission Trip Data - Interactive Choropleth
 by Fernando Maletski
 
+To access the visualization, please click here: http://fmaletski.com/projects/nyc-taxi-map/
+
 ## Summary
 This interactive data visualization illustrates when and where the NYC yellow taxis pick up and drop off passengers in the city. The data was obtained from the New York City Taxi & Limousine Commission.
 
