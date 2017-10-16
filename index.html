@@ -75,9 +75,9 @@
             text-align: center;
         }
     </style>
-    <script type="text/javascript">
+    <script type="text/javascript">        
+        "use strict";
         function draw(geo_data) {
-            "use strict";
 
             //Filter variables
 
@@ -286,6 +286,7 @@
                         animateNext(htmlText, i);
                         i = i + 1;
                     })
+                aniBtnControl(htmlText, 0, 'not');
             };
 
             //Interval declaration to be used between functions
@@ -324,6 +325,8 @@
            <p>The airports, LaGuardia and JFK, always have a lot of trips originating and destinating there, no matter the filters used.\
            Therefore, we will focus on the other regions throughout this animation."
                     );
+                    aniBtnControl(htmlText, i, 'not');
+
                 }
                 if (i == 1) {
                     resetMap('origin');
@@ -377,6 +380,7 @@
                         filterToD(tod);
                         tod++;
                     }, 2000);
+                    aniBtnControl(htmlText, i, interval);
                 }
 
                 if (i == 2) {
@@ -414,6 +418,7 @@
                         changeMode(md);
                         md++;
                     }, 2000);
+                    aniBtnControl(htmlText, i, interval);
                 }
                 if (i == 3) {
                     resetMap('destination');
@@ -460,7 +465,7 @@
                         filterToD(tod);
                         tod++;
                     }, 2000);
-
+                    aniBtnControl(htmlText, i, interval);
                 }
                 if (i == 4) {
                     resetMap('origin');
@@ -473,10 +478,50 @@
                     <p>Therefore, we encourage you, the user, to explore on your own, maybe you will find something\
                     interesting we missed.</p><p><b>Have fun!</b></p>";
                     htmlText.html(title + body);
+                    aniBtnControl(htmlText, i, 'not');
                 }
                 if (i == 5) {
                     endAnimation();
                 }
+            };
+
+            //Control the #animation-btn button behavior
+            function aniBtnControl(htmlText, i, interval) {
+                if(interval == 'not') {
+                    $('#animation-btn').addClass('disabled');
+                    d3.select('#animation-btn')
+                      .html('Pause Animation')
+                      .on('click', function(d) {
+                          return null;
+                      })
+                }
+                else if(interval == 'quit') {
+                    $('#animation-btn').removeClass('disabled');
+                    d3.select('#animation-btn')
+                      .html('Start Animation')
+                      .on("click", function(d) {
+                          animate();
+                          });
+                }
+                else {
+                    $('#animation-btn').removeClass('disabled');
+                    d3.select('#animation-btn')
+                    .html('Pause Animation')
+                    .on('click', function(d) {
+                        pauseAnimation(htmlText, i, interval);
+                    });
+                }
+            }
+
+
+            //Pause animation
+            function pauseAnimation(htmlText, i, interval) {
+                clearInterval(interval);
+                    d3.select('#animation-btn')
+                    .html('Resume Animation')
+                    .on('click', function(d) {
+                        animateNext(htmlText, i)
+                    });
             };
 
             //Cleanly exit animation
@@ -484,7 +529,8 @@
                 clearInterval(interval)
                 d3.selectAll('path').style('stroke', 'black')
                 d3.select('.animation').remove()
-            }
+                aniBtnControl(0, 0, 'quit');
+            };
 
             //Update the title to include filters
             function updateTitle(mode, time_of_day, weekday, logScale, lockScale) {

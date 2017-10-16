@@ -4,7 +4,13 @@ by Fernando Maletski
 ## Summary
 This interactive data visualization illustrates when and where the NYC yellow taxis pick up and drop off passengers in the city. The data was obtained from the New York City Taxi & Limousine Commission.
 
-By filtering the data using the interactive features, many observations can be made, such as the busiest parts of the city, when and where New Yorkers like to take cabs, how this preference varies during the day, and the days of the week, and much more.
+By clicking the "Start Animation" button the user is presented with a guided exploration of a few key points:
+* Introduction to the visualization
+* Busiest parts of the city as the pick up location (origins)
+* How time of day affects the map
+* How different the map becomes when using destination count to color the map instead of origin count
+
+The objective of the animation is to introduce the user to the modes and filters and inspire them to explore on their own. Because filtering the data using the interactive features, many different observations can be made, such as the busiest parts of the city, when and where New Yorkers like to take cabs, how this preference varies during the day, and the days of the week, and much more.
 
 ## Design
 
